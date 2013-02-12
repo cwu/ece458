@@ -1,9 +1,8 @@
 int main() {
 __asm__(
   "xor    %ebx,%ebx; " // "mov    $0x0,%ebx; "
-  "xor    %ecx,%ecx; " // "mov    $0x0,%ecx; "
-  "xor    %eax,%eax; " // "mov    $0xcb,%eax; "
-  "movb   $0xcb,%al; " // "mov    $0xcb,%eax; "
+  "xor    %eax,%eax; " // "mov    $0xd5,%eax; "
+  "movb   $0xd5,%al; " // "mov    $0xd5,%eax; "
   "int    $0x80      ;"
 
   "xorl   %eax,%eax;"

