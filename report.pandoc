@@ -17,3 +17,54 @@ After symlinking sh back to bash the same buffer overflow attack did not
 successfully spawn a new shell with root access. Instead the original user
 which spawned the shell 'seed' remained as both the set user id as well as
 the effective user id.
+
+Task 3
+======
+After resetting the randomize_va_space kernel flag to 2, the stack program
+causes a segmentation fault since the return address does not point to a memory
+location within the program. This is because the kernel now randomly generates
+the virtual address which the program starts at. The attack relies on the fact
+we can guess the stack address location so we can point the overriden return
+addres into the NOP space to run before the shell code. However randomization
+prevents us from using a constant return address to reliably jump to. This
+makes the attack come down to chance.
+
+However the attack's success comes down to a chance that the randomization of
+virtual address space comes close to what we guessed and the attack will work
+successfully. This can be brute forced by running an infinite loop which will
+repeatedly try run the exploited program until root shell is obtained. However
+due to the large random address space, this can take a very long time.
+
+Task 4
+======
+After turning off -fno-stack-protector, when the exploited program run this is the output:
+*** stack smashing detected ***: ./stack terminated
+======= Backtrace: =========
+/lib/tls/i686/cmov/libc.so.6(__fortify_fail+0x48)[0x4012cef8]
+/lib/tls/i686/cmov/libc.so.6(__fortify_fail+0x0)[0x4012ceb0]
+./stack[0x8048513]
+[0xbffff360]
+======= Memory map: ========
+08048000-08049000 r-xp 00000000 08:01 17727      /home/seed/ece458/stack
+08049000-0804a000 r--p 00000000 08:01 17727      /home/seed/ece458/stack
+0804a000-0804b000 rw-p 00001000 08:01 17727      /home/seed/ece458/stack
+09ac0000-09ae1000 rw-p 09ac0000 00:00 0          [heap]
+40000000-4001c000 r-xp 00000000 08:01 278463     /lib/ld-2.9.so
+4001c000-4001d000 r--p 0001b000 08:01 278463     /lib/ld-2.9.so
+4001d000-4001e000 rw-p 0001c000 08:01 278463     /lib/ld-2.9.so
+4001e000-4001f000 r-xp 4001e000 00:00 0          [vdso]
+4001f000-40022000 rw-p 4001f000 00:00 0 
+4002f000-4018b000 r-xp 00000000 08:01 294460     /lib/tls/i686/cmov/libc-2.9.so
+4018b000-4018c000 ---p 0015c000 08:01 294460     /lib/tls/i686/cmov/libc-2.9.so
+4018c000-4018e000 r--p 0015c000 08:01 294460     /lib/tls/i686/cmov/libc-2.9.so
+4018e000-4018f000 rw-p 0015e000 08:01 294460     /lib/tls/i686/cmov/libc-2.9.so
+4018f000-40193000 rw-p 4018f000 00:00 0 
+401a1000-401ae000 r-xp 00000000 08:01 278049     /lib/libgcc_s.so.1
+401ae000-401af000 r--p 0000c000 08:01 278049     /lib/libgcc_s.so.1
+401af000-401b0000 rw-p 0000d000 08:01 278049     /lib/libgcc_s.so.1
+bfdc2000-bfdd7000 rw-p bffea000 00:00 0          [stack]
+make: *** [all] Aborted
+
+The program crashes and root access is not obtained. This is due to gcc's
+StackGuard preventing basic buffer overflow attacks on the stack's return
+address.
