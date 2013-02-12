@@ -2,6 +2,9 @@ all: exploit stack shell
 	./exploit
 	- ./stack
 
+report.pdf: report.pandoc
+	pandoc -V geometry:margin=1in -o $@ $<
+
 shell: shellcode.c
 	sudo su -c "gcc -g -static -fno-stack-protector -o $@ $<"
 	sudo su -c "chmod 4755 $@"
