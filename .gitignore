@@ -16,7 +16,10 @@
 *.out
 *.app
 
-/exploit
-/stack
-badfile
+/a1/exploit
+/a1/stack
+/a1/shell
+/a1/call_shellcode
+/a1/shell_asm
+/a1/badfile
 .*.swp

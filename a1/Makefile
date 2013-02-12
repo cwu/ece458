@@ -16,7 +16,7 @@ stack: stack.c
 	sudo su -c "gcc -g -fno-stack-protector -o $@ $<"
 	sudo su -c "chmod 4755 $@"
 
-shellcode_asm: shellcode_asm.c
+shell_asm: shellcode_asm.c
 	sudo su -c "gcc -g -fno-stack-protector -o $@ $<"
 	sudo su -c "chmod 4755 $@"
 	./$@
@@ -28,4 +28,4 @@ call_shellcode: call_shellcode.c
 	./$@
 
 clean:
-	rm -f *.o exploit stack call_shellcode shell shellcode_asm
+	rm -f *.o exploit stack call_shellcode shell shell_asm
