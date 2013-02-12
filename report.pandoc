@@ -32,8 +32,8 @@ makes the attack come down to chance.
 However the attack's success comes down to a chance that the randomization of
 virtual address space comes close to what we guessed and the attack will work
 successfully. This can be brute forced by running an infinite loop which will
-repeatedly try run the exploited program until root shell is obtained.
-
+repeatedly try run the exploited program until root shell is obtained. However
+due to the large random address space, this can take a very long time.
 
 Task 4
 ======
