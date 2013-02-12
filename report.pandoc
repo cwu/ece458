@@ -18,6 +18,23 @@ successfully spawn a new shell with root access. Instead the original user
 which spawned the shell 'seed' remained as both the set user id as well as
 the effective user id.
 
+Task 3
+======
+After resetting the randomize_va_space kernel flag to 2, the stack program
+causes a segmentation fault since the return address does not point to a memory
+location within the program. This is because the kernel now randomly generates
+the virtual address which the program starts at. The attack relies on the fact
+we can guess the stack address location so we can point the overriden return
+addres into the NOP space to run before the shell code. However randomization
+prevents us from using a constant return address to reliably jump to. This
+makes the attack come down to chance.
+
+However the attack's success comes down to a chance that the randomization of
+virtual address space comes close to what we guessed and the attack will work
+successfully. This can be brute forced by running an infinite loop which will
+repeatedly try run the exploited program until root shell is obtained.
+
+
 Task 4
 ======
 After turning off -fno-stack-protector, when the exploited program run this is the output:
