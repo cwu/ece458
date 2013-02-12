@@ -3,7 +3,7 @@ all: exploit stack shell
 	- ./stack
 
 report.pdf: report.pandoc
-	pandoc -V geometry:margin=1in -o $@ $<
+	pandoc -V geometry:margin=0.75in -o $@ $<
 
 shell: shellcode.c
 	sudo su -c "gcc -g -static -fno-stack-protector -o $@ $<"
