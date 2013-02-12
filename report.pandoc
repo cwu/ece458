@@ -1,0 +1,19 @@
+ECE 458 Assignment 1
+====================
+Christopher Wu - 20305170, Fravic Fernando - 
+
+Task 1
+======
+Using gdb we set a breakpoint at the bof function. From this we deduced that our
+return address was placed at 0xBFFFF2FC which indicated the end of hte stack
+frame for the bof function. Based on this the attack vector overwrote the return
+address with the return address location + 100 bytes(0xBFFFF360) and the shell
+code was put at the end of this payload. Using this we were able to exploit the
+stack program using a buffer overflow attack.
+
+Task 2
+======
+After symlinking sh back to bash the same buffer overflow attack did not
+successfully spawn a new shell with root access. Instead the original user
+which spawned the shell 'seed' remained as both the set user id as well as
+the effective user id.
