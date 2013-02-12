@@ -18,7 +18,8 @@ spawned a new shell, but without root access. Instead the original user
 that spawned the shell, 'seed', remained as both the real user id as well as
 the effective user id. This is because although ./stack has been made to
 set-root-uid, bash drops the effective user id 'root' when it is invoked,
-restoring the real user id 'seed'.
+restoring the real user id 'seed'. To get around this, we tried adding a call
+to setreuid in our shellcode. However, we were unable to get this working.
 
 Task 3
 ======
