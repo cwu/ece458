@@ -16,15 +16,17 @@ class Parser
   end
 
   def parseTimes(lines)
-    re = /\d{2}:\d{2}:\d{2}.\d{6}/
-    lastTime = DateTime.parse(re.match(lines[0])[0])
-    lines.map do |l|
+    re = /\d{2}:\d{2}:(\d{2}.\d{6})/
+    lastTime = re.match(lines[0])[1].to_f
+    times = []
+    lines.each do |l|
       time = re.match(l)
       next if time.nil?
-      time = DateTime.parse(time[0])
+      time = time[1].to_f
+      times << time - lastTime
       lastTime = time
-      time - lastTime
     end
+    times
   end
 
   def write(sizesFile, timesFile)
