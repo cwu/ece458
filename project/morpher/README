@@ -1,0 +1,47 @@
+This project is an implementation of the paper:
+"Traffic Morphing: An efficient defense against statistical traffic analysis"
+by Charles Wright, Scott Coull, and Fabian Monrose.
+
+It's written in Python and it uses GLPK to solve Linear Programming
+problems.
+
+In the topdir you can find:
+
+* morpheus.py: You pass it a source and a target probability
+    distribution of packet lengths and it writes a morphing matrix in
+    Matrix Market format to a given output file.
+    You can then use those morphing matrices to your heart's content.
+
+* dreams/: Contains 'dream', a small library that understands what a
+    morphing matrix is. The dreams/ directory has child directories
+    containing 'dream' in different programming languages.
+    Dream can answer questions like: "What possible shapes can a
+    packet of 420 bytes take for this morphing matrix?" or "Give me a
+    target packet length for a packet of 12 bytes right now."
+
+* data/: The data/ directory contains some potentially useful
+    packet length probability distributions.
+
+* analysis/: The analysis/ directory contains a script which helps you
+    decide whether using traffic morphing, is worth it. That is,
+    whether the overhead of traffic morphing is sufficiently smaller
+    than the overhead of directly sampling the probability
+    distributions.
+
+    Given the packet size probability distributions of your source and
+    target protocols and an appropriate morphing matrix, it morphs
+    packets using direct sampling _and_ traffic morphing, and plots
+    the overhead of both methods. Looking at the resulting plots
+    should help you decide if traffic morphing is a good idea.
+
+* ACKNOWLEDGMENTS: A kind and cheerful text file that thanks people
+    who helped this project.
+
+* TODO: A text file listing a couple of stuff that should be coded.
+
+* FAQ: A file containing Frequently Asked Questions.
+
+* LICENSE: A file containing this project's software license.
+
+* README: Hmmmm...
+

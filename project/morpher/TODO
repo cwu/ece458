@@ -1,0 +1,14 @@
+* Review the GLPK part. It finishes *too* fast for a 1460x1460
+  morphing matrix. The resulting matrix seems fine™ though.
+
+* Fix the representation errors that occur when casting a Decimal to
+  a float.
+
+* Make morpheus.py and dream.py work with Python < 2.7 as well.
+  The current blockers are:
+  * subprocess.check_output()
+  * float->decimal, which can be done with Decimal(repr(a_float)) in < 2.7.
+  so it doesn't seem too hard.
+
+* Triple-audit dream.c to be secure against corrupted Matrix Market files
+.
