@@ -11,7 +11,7 @@ from scipy.sparse import lil_matrix
 import scipy.io
 import numpy
 
-PARANOIA = True
+PARANOIA = False
 
 # 1500b ethernet MTU - 20b min. ip headers - 20b min. tcp headers
 MAX_TCP_PAYLOAD_SIZE = 1460

@@ -17,14 +17,15 @@ def get_rand_size(distr):
   raise ValueError("bad random with distribution: %f" % r)
 
 def main():
-  if len(sys.argv) < 2:
-    print "simulation.py <distr path>"
+  if len(sys.argv) < 3:
+    print "simulation.py <sim distr path> <target_distr_path>"
     return
 
   distr_name = sys.argv[1]
   sim_distr = [float(prob) for prob in morpheus.get_distr_from_file(distr_name)]
+  target_distr = [float(prob) for prob in morpheus.get_distr_from_file(sys.argv[2])]
 
-  sock = morph_socket.MorphSocket(socket.AF_INET, socket.SOCK_STREAM)
+  sock = morph_socket.MorphSocket(socket.AF_INET, socket.SOCK_STREAM, target_distr)
   sock.connect(('localhost', 8081))
   last_load = time.time()
 
