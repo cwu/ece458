@@ -9,7 +9,7 @@ class MorphSocket(object):
     if type_ == socket.SOCK_STREAM:
       self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     start = time.time()
-    self.mm = dream.MorphingMatrix(dream.get_csc_from_mm("tor_to_https.mtx"))
+    self.mm = dream.MorphingMatrix(dream.get_csc_from_mm("https_to_tor.mtx"))
     self.dst_distr = distr
     end = time.time()
     print "Dst distribution: sum = %f | len = %d" % (sum(self.dst_distr), len(self.dst_distr))
