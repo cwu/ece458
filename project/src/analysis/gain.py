@@ -230,4 +230,3 @@ for i in xrange(1,max(TEST_N)+1):
     """If it's time to plot, plot_it()."""
     if (i in TEST_N):
         plot_it(range(1,i+1), [y_axis_sampling, y_axis_morphing], ["sampling", "morphing"], str(i))
-
