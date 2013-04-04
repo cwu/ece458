@@ -29,16 +29,41 @@ class Parser
     times
   end
 
-  def write(sizesFile, timesFile)
-    File.open(sizesFile, 'w') { |f|
+  def writeSizesDistribution(fileName)
+    distrib = {}
+    total = 0
+    max = 0
+    @sizes.each { |s|
+      distrib[s.to_i].nil? ? distrib[s.to_i] = 0 : distrib[s.to_i] += 1
+      total += 1
+      max = [max, s.to_i].max
+    }
+    distrib.merge!(distrib) { |k,v| v.to_f/total.to_f }
+
+    File.open(fileName + "_dist.txt", 'w') { |f|
+      f.puts("# Packet length probability distribution")
+      (1..max).each { |i|
+        num = distrib[i].nil? ? "0" : distrib[i].to_s
+        f.puts(i.to_s + ": " + num)
+      }
+    }
+  end
+
+  def writeSizesCSV(fileName)
+    File.open(fileName + ".csv", 'w') { |f|
       f.puts("Size,")
       @sizes.each { |l| f.puts(l + ',') }
     }
-    File.open(timesFile, 'w') { |f|
+  end
+
+  def writeTimesCSV(fileName)
+    File.open(fileName + "_times.csv", 'w') { |f|
       f.puts("TimeDiff,")
       @times.each { |l| f.puts(l.to_s + ',') }
     }
   end
 end
 
-Parser.new(ARGV[0]).write(ARGV[1], ARGV[2])
+p = Parser.new(ARGV[0])
+p.writeSizesCSV(ARGV[1]);
+p.writeSizesDistribution(ARGV[1])

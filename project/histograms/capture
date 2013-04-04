@@ -1,0 +1,8 @@
+echo "Saving packets..."
+tcpdump -w dumps/$1.dump
+echo "Converting to flatfile..."
+tcpdump -r dumps/$1.dump > dumps/$1.txt
+echo "Parsing distribution..."
+ruby parse.rb dumps/$1.txt dumps/$1
+echo "Creating chart..."
+open -a /Applications/Google\ Chrome.app http://localhost.com/~fravic/ece458/?src=$1
