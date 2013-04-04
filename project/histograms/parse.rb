@@ -1,8 +1,9 @@
 require 'date'
 
 class Parser
-  def initialize(infile)
-    lines = File.readlines(infile)
+  def initialize(filename)
+    `tcpdump -r #{filename}.dump > #{filename}.txt`
+    lines = File.readlines(filename + ".txt")
     lines.map!{ |l| l.encode!('UTF-8', 'UTF-8', :invalid => :replace) }
     @sizes = parseSizes(lines)
     @times = parseTimes(lines)
@@ -29,7 +30,7 @@ class Parser
     times
   end
 
-  def writeSizesDistribution(fileName)
+  def writeSizesDistribution(filename)
     distrib = {}
     total = 0
     max = 0
@@ -40,7 +41,7 @@ class Parser
     }
     distrib.merge!(distrib) { |k,v| v.to_f/total.to_f }
 
-    File.open(fileName + "_dist.txt", 'w') { |f|
+    File.open(filename + "_dist.txt", 'w') { |f|
       f.puts("# Packet length probability distribution")
       (1..max).each { |i|
         num = distrib[i].nil? ? "0" : distrib[i].to_s
@@ -49,21 +50,33 @@ class Parser
     }
   end
 
-  def writeSizesCSV(fileName)
-    File.open(fileName + ".csv", 'w') { |f|
+  def writeSizesCSV(filename)
+    File.open(filename + ".csv", 'w') { |f|
       f.puts("Size,")
       @sizes.each { |l| f.puts(l + ',') }
     }
   end
 
-  def writeTimesCSV(fileName)
-    File.open(fileName + "_times.csv", 'w') { |f|
+  def writeTimesCSV(filename)
+    File.open(filename + "_times.csv", 'w') { |f|
       f.puts("TimeDiff,")
       @times.each { |l| f.puts(l.to_s + ',') }
     }
   end
 end
 
-p = Parser.new(ARGV[0])
-p.writeSizesCSV(ARGV[1]);
-p.writeSizesDistribution(ARGV[1])
+def repeat_every(interval, &block)
+  loop do
+    start_time = Time.now
+    Thread.new(&block).join
+    elapsed = Time.now - start_time
+    sleep([interval - elapsed, 0].max)
+  end
+end
+
+repeat_every(2) do
+  puts "Parsing tcpdump..."
+  p = Parser.new(ARGV[0])
+  p.writeSizesCSV(ARGV[0]);
+  p.writeSizesDistribution(ARGV[0])
+end
