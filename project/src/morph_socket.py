@@ -25,18 +25,14 @@ class MorphSocket(object):
     size = 0
     for p in self.dst_distr:
       cummulative += p
-      if r >= cummulative:
+      if r < cummulative:
         return size
       size += 1
     raise ValueError("bad random with distribution: %f" % r)
 
   def send(self, data):
-    i = 0
-    step = 20
-    while i < len(data):
-      step += 2
-      self._send(data[i:i+step], step)
-      i += step
+    size = self.mm.get_target_length(len(data))
+    self._send(data, size)
 
   def _send(self, data, size):
     if len(data) == 0:
@@ -48,6 +44,7 @@ class MorphSocket(object):
         data = data + "-" * (size - len(data))
 
       self.socket.send(data[:size])
+      print ' to %d' % size
       data = data[size:]
       size = self.get_rand_size()
 
