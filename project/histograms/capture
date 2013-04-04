@@ -1,5 +1,5 @@
 echo "Saving packets..."
-tcpdump -w dumps/$1.dump
+tcpdump -w dumps/$1.dump host $2
 echo "Converting to flatfile..."
 tcpdump -r dumps/$1.dump > dumps/$1.txt
 echo "Parsing distribution..."
