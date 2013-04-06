@@ -1,0 +1,77 @@
+# ECE 458 - Assignment 4
+Christopher Wu - 20305170, Fravic Fernando - 20304037
+
+## Question 1
+
+1. Strength of RSA 2048bits = 112bits       ( looked up on table given by NIST )
+   Strength of 256bit AES = 256 bits        ( symmetric key )
+   Strength of SHA-256 = 256 / 2 = 128 bits ( due to birthday paradox )
+   The strength of the overall a system is its weakest link, which is RSA.
+   Therefore the overall the security strength is 112 bits.
+
+2. Since the weakest link defines the most efficient parameter (112 bits),
+   choose hash strength and AES strength to match it.
+   For hash we can use SHA-224 which has a strength of 112 bits.
+   For AES there is no 112 bit strength scheme. The next highest strength is
+   128bits. Therefore we choose SHA-224 and AES-128 to match RSA-2048.
+
+## Question 2
+
+1. If the attacker can break RSA then if they intercept a signature with the
+   message. They can presumably derive `d` from the public `e` and the intercepted
+   message(s). They can easily use this to sign their own messages using RSA.
+
+2. If the hash function is not collision resistant and it is assumed that the
+   attacker has the ability to request any message to be signed with their own
+   private key. Since the hash function is not collision resistant it is
+   possible for the hacker to generate a lot of messages and compare the hashes
+   of the messages. If they finds two messages (m1 and m2) with the same hash
+   (since the hash is not collision resistant), then if the attacker gets the
+   originator to sign m1 or m2, then the attacker can automatically use the same
+   signature for the other message, thereby forging a signature.
+
+## Question 3
+
+1. One advantage to hashing the passwords is if the password file is stolen then
+   the passwords are revealed easily to the attackers. Since the passwords are
+   stored after processed through a one way hash there is no reverse algorithm
+   that will produce the passwords, keeping them safer than storing them in
+   plain text. If they were stored in plain text then as soon as the attackers
+   got a hold of the passwords file they would easily see the passwords.
+
+2. One advantage to hashing passwords with respect to side channel attacks is
+   that when comparing hashes, both the hashed password attempt and the stored
+   hash are of the same fixed length. This allows for a comparison that does not
+   allow for information to be leaked via timing or power observations. If the
+   password was stored in plain text then the password attempt can vary the
+   length to help guess the length of the password as it is compared via a side
+   channel attack. Some sort of padding would need to be applied in order to
+   mitigate this which in itself may not sole the problem because side channel
+   attacks may be able to differentiate when padding occurs if the padding
+   algorithm is not carefully crafted to compute and consume the same power as
+   comparing the passwords themselves.
+
+3. One advantage to hash+salting the password is that a generic rainbow table
+   cannot be used to reverse the hash to find the password. The salt essentially
+   requires that a rainbow table be built for every random salt which breaks
+   down back to a brute force solution versus just hashing which can be defeated
+   (in many cases) by pre-computing rainbow tables.
+
+## Question 4
+
+1. One technique to prevent XSS attacks is to escape or sanitize all user input
+   into the site. This would modify <script> tags to something benign such as
+   &lt;script&gt; or just remove them. Then when the data is displayed on the
+   web page, it already has been escaped/sanitized so it may not form an XSS
+   attack.
+
+2. CSRF attacks differ from XSS is that they occur on a different site than the
+   one being attacked, while XSS attacks by injecting a foreign script into the
+   target site. They occur by making issuing requests to the target site when
+   the user visits a foreign site via image tags. Since the request is sent from
+   the user's browser as they visit the foreign site, same origin policy is not
+   violated. No, the solution in part 1 will not protect against CSRF attacks
+   because CSRF attacks are just valid requests which merely the user did not
+   intend to make. Sanitizing input does not solve this, since sanitizing input
+   merely protects against script injection but not forged requests originating
+   from a different site.
